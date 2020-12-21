@@ -1,0 +1,48 @@
+Deploying 'dockermaven Dockerfile: Dockerfile'...
+Building image...
+Preparing build context archive...
+[==================================================>]104/104 files
+Done
+
+Sending build context to Docker daemon...
+[==================================================>] 43,66kB
+Done
+
+Step 1/11 : FROM maven:3.6-jdk-11 as poms
+ ---> 50b8b77b0666
+Step 2/11 : WORKDIR /build
+ ---> Using cache
+ ---> 70b7120b6533
+Step 3/11 : COPY . .
+ ---> Using cache
+ ---> 3258c8ee805d
+Step 4/11 : RUN mkdir -vp poms/ && find . -name pom.xml -exec cp -v --parents \{\} poms/ \;
+ ---> Using cache
+ ---> 088358dfda03
+
+Step 5/11 : FROM maven:3.6-jdk-11 as dependencies
+ ---> 50b8b77b0666
+Step 6/11 : WORKDIR /build
+ ---> Using cache
+ ---> 70b7120b6533
+Step 7/11 : COPY --from=poms /build/poms/ .
+ ---> Using cache
+ ---> c1ba7830e601
+Step 8/11 : RUN mvn de.qaware.maven:go-offline-maven-plugin:resolve-dependencies
+ ---> Using cache
+ ---> 86d48948692d
+
+Step 9/11 : FROM dependencies as build
+ ---> 86d48948692d
+Step 10/11 : COPY --from=poms /build/ .
+ ---> Using cache
+ ---> 1605bddea7b9
+Step 11/11 : RUN mvn package
+ ---> Using cache
+ ---> 0547de0ca16b
+
+Successfully built 0547de0ca16b
+Successfully tagged dockermaven:latest
+'dockermaven Dockerfile: Dockerfile' has been deployed successfully.
+
+

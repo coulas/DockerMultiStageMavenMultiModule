@@ -1,0 +1,139 @@
+ploying 'dockermaven Dockerfile: Dockerfile'...
+Building image...
+Preparing build context archive...
+[==================================================>]104/104 files
+Done
+
+Sending build context to Docker daemon...
+[==================================================>] 43,66kB
+Done
+
+Step 1/11 : FROM maven:3.6-jdk-11 as poms
+ ---> 50b8b77b0666
+Step 2/11 : WORKDIR /build
+ ---> Using cache
+ ---> 70b7120b6533
+Step 3/11 : COPY . .
+ ---> 3258c8ee805d
+Step 4/11 : RUN mkdir -vp poms/ && find . -name pom.xml -exec cp -v --parents \{\} poms/ \;
+ ---> Running in 40f7e95b3353
+mkdir: created directory 'poms/'
+./inouts -> poms/./inouts
+'./inouts/pom.xml' -> 'poms/./inouts/pom.xml'
+./domain -> poms/./domain
+'./domain/pom.xml' -> 'poms/./domain/pom.xml'
+'./pom.xml' -> 'poms/./pom.xml'
+Removing intermediate container 40f7e95b3353
+ ---> 088358dfda03
+
+Step 5/11 : FROM maven:3.6-jdk-11 as dependencies
+ ---> 50b8b77b0666
+Step 6/11 : WORKDIR /build
+ ---> Using cache
+ ---> 70b7120b6533
+Step 7/11 : COPY --from=poms /build/poms/ .
+ ---> Using cache
+ ---> c1ba7830e601
+Step 8/11 : RUN mvn de.qaware.maven:go-offline-maven-plugin:resolve-dependencies
+ ---> Using cache
+ ---> 86d48948692d
+
+Step 9/11 : FROM dependencies as build
+ ---> 86d48948692d
+Step 10/11 : COPY --from=poms /build/ .
+ ---> 1605bddea7b9
+Step 11/11 : RUN mvn package
+ ---> Running in d8cd62ec7280
+[INFO] Scanning for projects...
+[WARNING]
+[WARNING] Some problems were encountered while building the effective model for io.permasoft.workshop:domain:jar:1.0-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ io.permasoft.workshop:domain:${project.parent.version}, /build/domain/pom.xml, line 15, column 14
+[WARNING]
+[WARNING] Some problems were encountered while building the effective model for io.permasoft.workshop:inouts:jar:1.0-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ io.permasoft.workshop:inouts:${project.parent.version}, /build/inouts/pom.xml, line 15, column 14
+[WARNING]
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING]
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING]
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO]
+[INFO] MultiDockerMultiMavenSquareMess                                    [pom]
+[INFO] domain                                                             [jar]
+[INFO] inouts                                                             [jar]
+[INFO]
+[INFO] -------< io.permasoft.workshop:MultiDockerMultiMavenSquareMess >--------
+[INFO] Building MultiDockerMultiMavenSquareMess 1.0-SNAPSHOT              [1/3]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO]
+[INFO] --------------------< io.permasoft.workshop:domain >--------------------
+[INFO] Building domain 1.0-SNAPSHOT                                       [2/3]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ domain ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 0 resource
+[INFO]
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ domain ---
+[INFO] Changes detected - recompiling the module!
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 1 source file to /build/domain/target/classes
+[INFO]
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ domain ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /build/domain/src/test/resources
+[INFO]
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ domain ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO]
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ domain ---
+[INFO] No tests to run.
+[INFO]
+[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ domain ---
+[INFO] Building jar: /build/domain/target/domain-1.0-SNAPSHOT.jar
+[INFO]
+[INFO] --------------------< io.permasoft.workshop:inouts >--------------------
+[INFO] Building inouts 1.0-SNAPSHOT                                       [3/3]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ inouts ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 0 resource
+[INFO]
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ inouts ---
+[INFO] Changes detected - recompiling the module!
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 1 source file to /build/inouts/target/classes
+[INFO]
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ inouts ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /build/inouts/src/test/resources
+[INFO]
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ inouts ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO]
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ inouts ---
+[INFO] No tests to run.
+[INFO]
+[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ inouts ---
+[INFO] Building jar: /build/inouts/target/inouts-1.0-SNAPSHOT.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for MultiDockerMultiMavenSquareMess 1.0-SNAPSHOT:
+[INFO]
+[INFO] MultiDockerMultiMavenSquareMess .................... SUCCESS [  0.007 s]
+[INFO] domain ............................................. SUCCESS [  2.078 s]
+[INFO] inouts ............................................. SUCCESS [  0.187 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.505 s
+[INFO] Finished at: 2020-12-21T00:43:21Z
+[INFO] ------------------------------------------------------------------------
+Removing intermediate container d8cd62ec7280
+ ---> 0547de0ca16b
+
+Successfully built 0547de0ca16b
+Successfully tagged dockermaven:latest
+'dockermaven Dockerfile: Dockerfile' has been deployed successfully.
+

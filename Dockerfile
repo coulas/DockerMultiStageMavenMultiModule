@@ -9,7 +9,7 @@ FROM maven:3.6-jdk-11 as dependencies
 WORKDIR /build
 COPY --from=poms /build/poms/ .
 
-RUN mvn dependency:go-offline compile
+RUN mvn de.qaware.maven:go-offline-maven-plugin:resolve-dependencies
 
 FROM dependencies as build
 
