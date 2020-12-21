@@ -13,4 +13,6 @@ RUN mvn dependency:go-offline compile
 
 FROM dependencies as build
 
+COPY --from=poms /build/ .
 RUN mvn package
+# then deploy to your external repository
