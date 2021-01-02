@@ -1,18 +1,11 @@
-FROM maven:3.6-jdk-11 as poms
+FROM maven:3.6-jdk-11
 
 WORKDIR /build
-COPY . .
-RUN mkdir -vp poms/ && find . -name pom.xml -exec cp -v --parents \{\} poms/ \;
-
-FROM maven:3.6-jdk-11 as dependencies
-
-WORKDIR /build
-COPY --from=poms /build/poms/ .
+COPY pom.xml /build/
+COPY domain/pom.xml /build/domain/
+COPY inouts/pom.xml /build/inouts/
 
 RUN mvn de.qaware.maven:go-offline-maven-plugin:resolve-dependencies
-
-FROM dependencies as build
-
-COPY --from=poms /build/ .
+COPY . /build/
 RUN mvn package
 # then deploy to your external repository
